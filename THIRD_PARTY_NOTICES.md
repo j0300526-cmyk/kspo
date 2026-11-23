@@ -4,6 +4,11 @@
 
 - **Three.js**, MIT, https://github.com/mrdoob/three.js. WebGL renderer, loaders, scene and controls. The copyright/permission notice is included at `public/licenses/three.txt`.
 - **Lucide**, ISC, https://github.com/lucide-icons/lucide. Interface icons. Notice included at `public/licenses/lucide.txt`.
+- **Comlink**, Apache-2.0, https://github.com/GoogleChromeLabs/comlink. Worker RPC, notice at `public/licenses/comlink.txt`.
+- **Zustand**, MIT, https://github.com/pmndrs/zustand. Vanilla application state, notice at `public/licenses/zustand.txt`.
+- **Zod**, MIT, https://github.com/colinhacks/zod. Project/observation input validation, notice at `public/licenses/zod.txt`.
+- **idb-keyval**, Apache-2.0, https://github.com/jakearchibald/idb-keyval. Async IndexedDB persistence, notice at `public/licenses/idb-keyval.txt`.
+- **three-mesh-bvh**, MIT, https://github.com/gkjohnson/three-mesh-bvh. Spatial picking and worker-based index creation, notice at `public/licenses/three-mesh-bvh.txt`.
 - **Vite**, MIT, https://github.com/vitejs/vite. Build/dev tooling; its source license is installed with the package and recorded in the lockfile.
 - **Happy DOM**, MIT, https://github.com/capricorn86/happy-dom. DOM tests only; not shipped as application runtime.
 - **esbuild**, MIT, https://github.com/evanw/esbuild. Test bundling/build tooling; not shipped as application runtime.
@@ -23,6 +28,6 @@ These tools were used to convert the official venue data; they are not embedded 
 
 The portal lists “이용허락범위 제한 없음”. The website includes a simplified/transformed GLB derived from the official KSPO DOME DAE and geometry-derived observation points, with provenance, transformation, source checksum, and limitations in `docs/venue-data.md` and `public/models/venue-meta.json`. These data are separate from the MIT license on our authored application code. No endorsement by the provider is implied.
 
-## Fonts
+## Development tools
 
-DM Sans and Noto Sans KR are requested from Google Fonts, under their respective SIL Open Font License terms. They are not included in the local application bundle; system font fallbacks are configured.
+Prettier (MIT) formats authored modules. fake-indexeddb (Apache-2.0) supplies IndexedDB for tests only. Neither is shipped as application runtime. The workbench uses system fonts and does not request Google Fonts.
