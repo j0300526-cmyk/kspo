@@ -73,6 +73,13 @@ export function analyze(observers, stage, equipment) {
     targets,
   };
 }
+export function isBetterLayout(candidate, previous) {
+  return (
+    candidate.mean < previous.mean - 1e-8 &&
+    candidate.affected <= previous.affected &&
+    candidate.severe <= previous.severe
+  );
+}
 export function optimizeEquipment(observers, stage, equipment, selectedId) {
   const current = analyze(observers, stage, equipment);
   let best = { equipment: clone(equipment), result: current, moved: false };
@@ -90,8 +97,7 @@ export function optimizeEquipment(observers, stage, equipment, selectedId) {
       if (overlaps(box, stage) || candidate.some((b) => b.id !== box.id && overlaps(box, b)))
         continue;
       const result = analyze(observers, stage, candidate);
-      if (result.mean < best.result.mean - 1e-8)
-        best = { equipment: candidate, result, moved: true };
+      if (isBetterLayout(result, best.result)) best = { equipment: candidate, result, moved: true };
     }
   return best;
 }

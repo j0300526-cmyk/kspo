@@ -1,4 +1,4 @@
-import { analyze, stageTargets } from '../domain/sightlines.js';
+import { analyze, stageTargets, isBetterLayout } from '../domain/sightlines.js';
 
 export class AnalysisCancelled extends Error {
   constructor() {
@@ -102,7 +102,7 @@ export function createAnalysisEngine(options = {}) {
           seen.add(key);
           const candidate = equipment.map((e) => (e.id === box.id ? box : e)),
             result = await analyzeInBatches(observers, stage, candidate, config(token));
-          if (result.mean < best.result.mean - 1e-8)
+          if (isBetterLayout(result, best.result))
             best = { equipment: structuredClone(candidate), result, moved: true };
           await (options.yieldControl || yieldTask)();
         }

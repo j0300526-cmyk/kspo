@@ -50,6 +50,6 @@ export function renderResults({
     $('#bar-current').style.width = `${current}%`;
     $('#compare-delta').textContent = `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%p`;
     $('#compare-note').textContent =
-      `관찰점 ${analysis.count}개 · 가림 ${prior.affected} → ${analysis.affected}개${JSON.stringify(project.stage) !== JSON.stringify(project.baseline?.stage) ? ' · 무대 설정 변경' : ''}`;
+      `관찰점 ${analysis.count}개 · 가림 ${prior.affected} → ${analysis.affected}개 · 50% 이상 가림 ${prior.severe} → ${analysis.severe}개${JSON.stringify(project.stage) !== JSON.stringify(project.baseline?.stage) ? ' · 무대 설정 변경' : ''}`;
   }
 }
