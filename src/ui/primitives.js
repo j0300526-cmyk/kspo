@@ -70,7 +70,7 @@ export const esc = (value) =>
   );
 export const $ = (selector) => document.querySelector(selector);
 export function numberField(id, label, value, min, max, unit = 'm') {
-  return `<label>${label}<div class="number-wrap"><input id="${id}" type="number" step="0.1" min="${min}" max="${max}" value="${value}" aria-label="${label}"/><span>${unit}</span></div></label>`;
+  return `<label>${label}<div class="number-wrap"><input id="${id}" class="form-control" type="number" step="0.1" min="${min}" max="${max}" value="${value}" aria-label="${label}"/><span>${unit}</span></div></label>`;
 }
 export function toast(message) {
   const el = $('#toast');

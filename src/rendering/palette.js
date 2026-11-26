@@ -1,10 +1,10 @@
 // Shared analysis colors for the map, legend, exported report, and 3D observations.
 export const MAP_COLORS = Object.freeze({
-  clear: '#a5aaa8',
-  partial: '#b58b48',
-  severe: '#a94b42',
-  improved: '#2b7368',
-  worse: '#b25e44',
-  same: '#d3d5d4',
-  inactive: '#e5e6e5',
+  clear: '#91a89c',
+  partial: '#c78a3b',
+  severe: '#bd5c56',
+  improved: '#16866b',
+  worse: '#c0773f',
+  same: '#d6dfd6',
+  inactive: '#e4eae2',
 });

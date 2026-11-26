@@ -60,7 +60,7 @@ export function createReviewDetails(selectPoint) {
       .join('');
     const current = analysis?.points.find((p) => p.id === selectedPointId),
       previous = prior?.points.find((p) => p.id === selectedPointId);
-    $('#point-title').textContent = current ? current.id : '지도에서 위치를 선택하세요';
+    $('#point-title').textContent = current ? current.id : '위치를 선택하세요';
     $('#point-before').textContent = previous
       ? `${previous.total - previous.blocked} / ${previous.total}`
       : '—';

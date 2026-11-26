@@ -1,4 +1,5 @@
-﻿import './styles/workbench.css';
+import '@tabler/core/dist/css/tabler.min.css';
+import './styles/workbench.css';
 import { createApplication } from './app/application.js';
 createApplication()
   .then((app) => {

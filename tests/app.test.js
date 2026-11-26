@@ -115,10 +115,12 @@ test('application flow: official observations, equipment edits, undo, comparison
   $('#tab-edit').click();
   assert.equal($('#panel-explore').hidden, true);
   assert.equal($('#panel-edit').hidden, false);
+  assert.match($('#workspace-title').textContent, /배치 편집/);
   $('#tab-edit').dispatchEvent(
-    new window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }),
+    new window.KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }),
   );
   assert.equal($('#panel-explore').hidden, false);
+  assert.match($('#workspace-title').textContent, /관람 위치/);
   $('[data-region="all"]').click();
   $('#tab-edit').click();
   const before = diagnostic().mean;

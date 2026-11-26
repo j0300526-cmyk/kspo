@@ -2,6 +2,7 @@
 
 ## Application dependencies
 
+- **Tabler Core**, MIT, https://github.com/tabler/tabler. Dashboard component CSS used for cards, buttons, form controls, badges, and the responsive workbench. License at `public/licenses/tabler.txt`. The bundled Bootstrap styles are also MIT; notice at `public/licenses/bootstrap.txt`.
 - **Three.js**, MIT, https://github.com/mrdoob/three.js. WebGL renderer, loaders, scene and controls. The copyright/permission notice is included at `public/licenses/three.txt`.
 - **Lucide**, ISC, https://github.com/lucide-icons/lucide. Interface icons. Notice included at `public/licenses/lucide.txt`.
 - **Comlink**, Apache-2.0, https://github.com/GoogleChromeLabs/comlink. Worker RPC, notice at `public/licenses/comlink.txt`.

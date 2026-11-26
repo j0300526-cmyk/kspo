@@ -35,20 +35,30 @@ export function bindExploration({ onRegion, onEnter }) {
       tab.tabIndex = active ? 0 : -1;
       $(`#panel-${tab.dataset.panel}`).hidden = !active;
     }
+    $('#workspace-title').textContent = id === 'edit' ? '무대·장비 배치 편집' : '관람 위치별 시야';
+    $('#workspace-description').textContent =
+      id === 'edit'
+        ? '장비 위치를 조정하고, 관람 위치별 시야 변화를 확인하세요.'
+        : '공연장을 둘러보고, 장비 배치 전후의 시야를 비교하세요.';
   }
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => showPanel(tab.dataset.panel), { signal: events.signal });
     tab.addEventListener(
       'keydown',
       (event) => {
-        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key))
+          return;
         event.preventDefault();
         const next =
           event.key === 'Home'
             ? tabs[0]
             : event.key === 'End'
               ? tabs.at(-1)
-              : tabs[(index + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+              : tabs[
+                  (index +
+                    (['ArrowRight', 'ArrowDown'].includes(event.key) ? 1 : tabs.length - 1)) %
+                    tabs.length
+                ];
         showPanel(next.dataset.panel);
         next.focus();
       },
