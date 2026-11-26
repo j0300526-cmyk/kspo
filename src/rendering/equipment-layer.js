@@ -28,27 +28,27 @@ export class EquipmentLayer {
         group.userData.id = e.id;
         const body = new THREE.Mesh(
           new THREE.BoxGeometry(1, 1, 1),
-          new THREE.MeshStandardMaterial({ color: 0x8391a6, roughness: 0.65 }),
+          new THREE.MeshStandardMaterial({ color: 0x898f89, roughness: 0.65 }),
         );
         body.userData.id = e.id;
         group.add(body);
         const edge = new THREE.LineSegments(
           new THREE.EdgesGeometry(body.geometry),
-          new THREE.LineBasicMaterial({ color: 0xc0ccdd }),
+          new THREE.LineBasicMaterial({ color: 0xc9cdc7 }),
         );
         group.add(edge);
         let detail;
         if (e.type === 'camera') {
           detail = new THREE.Mesh(
             new THREE.BoxGeometry(1, 0.55, 0.8),
-            new THREE.MeshStandardMaterial({ color: 0x252e3b }),
+            new THREE.MeshStandardMaterial({ color: 0x303530 }),
           );
           group.add(detail);
         }
         if (e.type === 'speaker') {
           detail = new THREE.Mesh(
             new THREE.PlaneGeometry(1, 1),
-            new THREE.MeshStandardMaterial({ color: 0x283240, side: THREE.DoubleSide }),
+            new THREE.MeshStandardMaterial({ color: 0x303530, side: THREE.DoubleSide }),
           );
           group.add(detail);
         }
@@ -62,8 +62,8 @@ export class EquipmentLayer {
       item.body.position.y = e.height / 2;
       item.edge.scale.copy(item.body.scale);
       item.edge.position.copy(item.body.position);
-      item.body.material.color.setHex(e.id === selectedId ? 0xd88b55 : 0x647b89);
-      item.edge.material.color.setHex(e.id === selectedId ? 0xf7c397 : 0x9fb1ba);
+      item.body.material.color.setHex(e.id === selectedId ? 0x3f554a : 0x838a83);
+      item.edge.material.color.setHex(e.id === selectedId ? 0x879b8c : 0xbac1b8);
       if (e.type === 'camera') {
         item.detail.position.set(0, e.height + 0.275, 0);
         item.detail.scale.x = Math.min(1, e.width * 0.4);

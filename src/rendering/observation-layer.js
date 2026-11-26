@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { observationRegion } from '../domain/observation-regions.js';
+import { MAP_COLORS } from './palette.js';
 export class ObservationLayer {
   constructor(scene) {
     this.scene = scene;
@@ -39,14 +40,14 @@ export class ObservationLayer {
       const active = regionId === 'all' || observationRegion(p, stage) === regionId;
       this.color.set(
         !active
-          ? '#d7dfe4'
+          ? MAP_COLORS.inactive
           : showHeat
             ? p.ratio >= 0.5
-              ? '#d84e43'
+              ? MAP_COLORS.severe
               : p.ratio > 0
-                ? '#d9a051'
-                : '#267b9c'
-            : '#267b9c',
+                ? MAP_COLORS.partial
+                : MAP_COLORS.clear
+            : MAP_COLORS.clear,
       );
       this.mesh.setColorAt(i, this.color);
     });

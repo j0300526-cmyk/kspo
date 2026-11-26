@@ -5,22 +5,22 @@ export class StageLayer {
     this.group = new THREE.Group();
     this.deck = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshStandardMaterial({ color: 0x28333a, roughness: 0.9 }),
+      new THREE.MeshStandardMaterial({ color: 0x242625, roughness: 0.9 }),
     );
     this.group.add(this.deck);
     this.edge = new THREE.LineSegments(
       new THREE.EdgesGeometry(this.deck.geometry),
-      new THREE.LineBasicMaterial({ color: 0x637983 }),
+      new THREE.LineBasicMaterial({ color: 0x6a7269 }),
     );
     this.group.add(this.edge);
     this.marker = new THREE.Mesh(
       new THREE.CylinderGeometry(0.28, 0.28, 1.35, 12),
-      new THREE.MeshStandardMaterial({ color: 0xd64436 }),
+      new THREE.MeshStandardMaterial({ color: 0x9a4a37 }),
     );
     this.group.add(this.marker);
     this.front = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: 0xd64436 }),
+      new THREE.MeshBasicMaterial({ color: 0x9a4a37 }),
     );
     this.group.add(this.front);
     if (typeof document !== 'undefined') {

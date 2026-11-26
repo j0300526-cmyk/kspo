@@ -1,5 +1,6 @@
 import { $, esc } from './primitives.js';
 import { comparisonCounts } from '../rendering/seat-map.js';
+import { MAP_COLORS } from '../rendering/palette.js';
 import { regionSummary } from '../domain/observation-regions.js';
 
 export function createReviewDetails(selectPoint) {
@@ -45,14 +46,14 @@ export function createReviewDetails(selectPoint) {
     const legend =
       plan === 'changes'
         ? [
-            ['#3859ed', '가림 감소'],
-            ['#d98525', '가림 증가'],
-            ['#d4dce4', '동일'],
+            [MAP_COLORS.improved, '가림 감소'],
+            [MAP_COLORS.worse, '가림 증가'],
+            [MAP_COLORS.same, '동일'],
           ]
         : [
-            ['#9aaebf', '가림 없음'],
-            ['#e7a246', '일부 가림'],
-            ['#da5a54', '50% 이상 가림'],
+            [MAP_COLORS.clear, '가림 없음'],
+            [MAP_COLORS.partial, '일부 가림'],
+            [MAP_COLORS.severe, '50% 이상 가림'],
           ];
     $('#map-legend').innerHTML = legend
       .map(([color, label]) => `<span><i style="background:${color}"></i>${label}</span>`)
