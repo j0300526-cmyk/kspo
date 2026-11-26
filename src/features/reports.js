@@ -31,8 +31,8 @@ export function analysisCSV(result, equipment) {
   ];
   return '\uFEFF' + rows.map((row) => row.map(csvCell).join(',')).join('\r\n');
 }
-export function showReport({ project, result, prior, scene, description }) {
-  const image = scene?.capture(),
+export function showReport({ project, result, prior, scene, description, image: suppliedImage }) {
+  const image = suppliedImage || scene?.capture(),
     visible = result.count ? `${((1 - result.mean) * 100).toFixed(1)}%` : '분석점 없음';
   modal(
     '시야 가림 분석',

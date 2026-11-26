@@ -9,6 +9,7 @@
 - **Zod**, MIT, https://github.com/colinhacks/zod. Project/observation input validation, notice at `public/licenses/zod.txt`.
 - **idb-keyval**, Apache-2.0, https://github.com/jakearchibald/idb-keyval. Async IndexedDB persistence, notice at `public/licenses/idb-keyval.txt`.
 - **three-mesh-bvh**, MIT, https://github.com/gkjohnson/three-mesh-bvh. Spatial picking and worker-based index creation, notice at `public/licenses/three-mesh-bvh.txt`.
+- **d3-polygon**, ISC, https://github.com/d3/d3-polygon. Convex boundary of public observation coordinates for the SVG map. Notice at `public/licenses/d3-polygon.txt`.
 - **Vite**, MIT, https://github.com/vitejs/vite. Build/dev tooling; its source license is installed with the package and recorded in the lockfile.
 - **Happy DOM**, MIT, https://github.com/capricorn86/happy-dom. DOM tests only; not shipped as application runtime.
 - **esbuild**, MIT, https://github.com/evanw/esbuild. Test bundling/build tooling; not shipped as application runtime.
@@ -31,3 +32,5 @@ The portal lists “이용허락범위 제한 없음”. The website includes a 
 ## Development tools
 
 Prettier (MIT) formats authored modules. fake-indexeddb (Apache-2.0) supplies IndexedDB for tests only. Neither is shipped as application runtime. The workbench uses system fonts and does not request Google Fonts.
+
+@resvg/resvg-js (MPL-2.0), https://github.com/yisibl/resvg-js, rasterizes the actual generated SVG for offline visual checks. This is development tooling and is not shipped in the application runtime.

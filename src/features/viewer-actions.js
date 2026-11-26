@@ -1,9 +1,19 @@
-import { $, toast } from '../ui/primitives.js';
-export function bindViewerActions({ project, edit, get, getScene, selectPoint }) {
+import { $, toast, download } from '../ui/primitives.js';
+export function bindViewerActions({
+  project,
+  edit,
+  get,
+  getScene,
+  selectPoint,
+  getMap = () => null,
+  getDisplay = () => '3d',
+  on3D = () => {},
+}) {
   let addPointMode = false;
   document.querySelectorAll('[data-view]').forEach(
     (btn) =>
       (btn.onclick = () => {
+        on3D();
         if (btn.dataset.view === 'eye' && !get().selectedPointId) {
           const p = get().analysis?.points.find((p) => p.ratio > 0) || get().analysis?.points[0];
           if (!p) return toast('관찰점을 먼저 지정하세요.');
@@ -29,6 +39,8 @@ export function bindViewerActions({ project, edit, get, getScene, selectPoint })
     e.currentTarget.setAttribute('aria-pressed', String(getScene().showHeat));
   };
   $('#snapshot').onclick = () => {
+    if (getDisplay() === 'map' && getMap())
+      return download('garim-zero-map.svg', getMap(), 'image/svg+xml');
     if (!getScene()) return toast('3D 화면을 사용할 수 없습니다.');
     const a = document.createElement('a');
     a.href = getScene().capture();
@@ -45,6 +57,7 @@ export function bindViewerActions({ project, edit, get, getScene, selectPoint })
           : 'KSPO DOME / 원본 건물 모델';
   };
   $('#add-point').onclick = () => {
+    on3D();
     addPointMode = !addPointMode;
     getScene()?.setAddPoint(addPointMode);
     $('#add-point').classList.toggle('primary', addPointMode);

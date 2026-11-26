@@ -9,7 +9,9 @@ export function renderResults({
   selectedId,
   description,
   engineMode,
+  displayAnalysis,
 }) {
+  const shown = displayAnalysis || analysis;
   $('#analysis-status').textContent = error
     ? '분석 오류'
     : busy
@@ -27,12 +29,12 @@ export function renderResults({
   $('#report').disabled = busy || !analysis;
   $('#cancel-analysis').disabled = !busy && !error;
   if (!analysis) return;
-  $('#metric-total').innerHTML = `${analysis.count.toLocaleString()}<small>개</small>`;
-  $('#metric-affected').innerHTML = `${analysis.affected.toLocaleString()}<small>개</small>`;
-  $('#metric-visible').innerHTML = analysis.count
-    ? `${((1 - analysis.mean) * 100).toFixed(1)}<small>%</small>`
+  $('#metric-total').innerHTML = `${shown.count.toLocaleString()}<small>개</small>`;
+  $('#metric-affected').innerHTML = `${shown.affected.toLocaleString()}<small>개</small>`;
+  $('#metric-visible').innerHTML = shown.count
+    ? `${((1 - shown.mean) * 100).toFixed(1)}<small>%</small>`
     : '—';
-  $('#metric-severe').textContent = `50% 이상 가림 ${analysis.severe.toLocaleString()}개`;
+  $('#metric-severe').textContent = `50% 이상 가림 ${shown.severe.toLocaleString()}개`;
   $('#metric-total-note').textContent = description;
   $('#viewer-observer-label').textContent = `${description} · 공식 좌석번호 아님`;
   $('#custom-point-count').textContent = project.customPoints.length

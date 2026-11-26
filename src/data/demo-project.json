@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "name": "가상 장비 배치 · KSPO DOME 비교 예제",
+  "stage": {
+    "x": 0,
+    "z": -16,
+    "width": 18,
+    "depth": 8,
+    "height": 1.5,
+    "targetHeight": 1.5
+  },
+  "equipment": [
+    {
+      "id": "camera-1",
+      "name": "중앙 카메라 플랫폼",
+      "type": "camera",
+      "x": 0,
+      "z": 9,
+      "width": 4,
+      "depth": 3,
+      "height": 4.5,
+      "rotation": 0
+    },
+    {
+      "id": "speaker-1",
+      "name": "왼쪽 스피커 타워",
+      "type": "speaker",
+      "x": -14,
+      "z": -6,
+      "width": 2,
+      "depth": 2,
+      "height": 7,
+      "rotation": 0
+    },
+    {
+      "id": "speaker-2",
+      "name": "오른쪽 스피커 타워",
+      "type": "speaker",
+      "x": 14,
+      "z": -6,
+      "width": 2,
+      "depth": 2,
+      "height": 7,
+      "rotation": 0
+    }
+  ],
+  "customPoints": [],
+  "observerMode": "official",
+  "customModel": null,
+  "baseline": {
+    "stage": {
+      "x": 0,
+      "z": -16,
+      "width": 18,
+      "depth": 8,
+      "height": 1.5,
+      "targetHeight": 1.5
+    },
+    "equipment": [
+      {
+        "id": "camera-1",
+        "name": "중앙 카메라 플랫폼",
+        "type": "camera",
+        "x": 0,
+        "z": 5,
+        "width": 4,
+        "depth": 3,
+        "height": 4.5,
+        "rotation": 0
+      },
+      {
+        "id": "speaker-1",
+        "name": "왼쪽 스피커 타워",
+        "type": "speaker",
+        "x": -10,
+        "z": -10,
+        "width": 2,
+        "depth": 2,
+        "height": 7,
+        "rotation": 0
+      },
+      {
+        "id": "speaker-2",
+        "name": "오른쪽 스피커 타워",
+        "type": "speaker",
+        "x": 10,
+        "z": -10,
+        "width": 2,
+        "depth": 2,
+        "height": 7,
+        "rotation": 0
+      }
+    ]
+  }
+}

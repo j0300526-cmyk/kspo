@@ -89,6 +89,20 @@ test('application flow: official observations, equipment edits, undo, comparison
   assert.equal(diagnostic().count, 7382);
   assert.equal(diagnostic().modelObserverCount, 7382);
   assert.equal($('#observer-mode').value, 'official');
+  assert.equal(diagnostic().display, 'map');
+  assert.ok($('#seat-map-host svg'));
+  assert.equal($('#canvas-host').classList.contains('hidden'), true);
+  $('[data-plan="before"]').click();
+  assert.equal(diagnostic().plan, 'before');
+  assert.match($('#metric-affected').textContent, /3,072/);
+  $('[data-plan="current"]').click();
+  assert.match($('#metric-affected').textContent, /2,120/);
+  $('[data-plan="changes"]').click();
+  assert.match($('#map-legend').textContent, /가림 감소/);
+  $('[data-pick-point]').click();
+  assert.ok(diagnostic().selectedPointId);
+  assert.match($('#point-current').textContent, /\/ 9/);
+  $('[data-plan="current"]').click();
   assert.equal($('#panel-explore').hidden, false);
   $('[data-region="left"]').click();
   assert.equal(diagnostic().regionId, 'left');
@@ -97,6 +111,7 @@ test('application flow: official observations, equipment edits, undo, comparison
   $('#region-enter').click();
   assert.ok(diagnostic().selectedPointId);
   assert.equal(diagnostic().viewMode, 'eye');
+  assert.equal(diagnostic().display, '3d');
   $('#tab-edit').click();
   assert.equal($('#panel-explore').hidden, true);
   assert.equal($('#panel-edit').hidden, false);

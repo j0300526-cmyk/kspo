@@ -6,7 +6,7 @@ import { createProjectStore } from './store.js';
 import { createProjectStorage } from '../services/project-storage.js';
 import { AnalysisClient } from '../services/analysis-client.js';
 import { createAnalysisCoordinator } from '../services/analysis-coordinator.js';
-import { parseObservations, defaultProject } from '../domain/project-schema.js';
+import { parseObservations, parseProject } from '../domain/project-schema.js';
 import { clone, createObservers } from '../domain/defaults.js';
 import { renderLayout } from '../ui/layout.js';
 import { $, ico, icons, toast, modal } from '../ui/primitives.js';
@@ -15,6 +15,9 @@ import { renderResults } from '../ui/results.js';
 import { sourceContent } from '../ui/sources.js';
 import { showReport } from '../features/reports.js';
 import { renderExploration, bindExploration } from '../ui/exploration.js';
+import { SeatMap, seatMapSVG } from '../rendering/seat-map.js';
+import { createReviewDetails } from '../ui/review-details.js';
+import demoProject from '../data/demo-project.json';
 import {
   observationRegion,
   regionSummary,
@@ -33,7 +36,7 @@ export async function createApplication({
         if ($('#saved-label')) $('#saved-label').textContent = message;
       },
     });
-  const initial = (await storage.load()) || defaultProject(),
+  const initial = (await storage.load()) || parseProject(structuredClone(demoProject)),
     store = createProjectStore(initial);
   $('#app').innerHTML = renderLayout(initial);
   icons();
@@ -42,7 +45,9 @@ export async function createApplication({
     officialMeta = null,
     engineMode = 'starting',
     disposed = false,
-    regionId = 'all';
+    regionId = 'all',
+    plan = 'current',
+    display = 'map';
   let geometrySignature = '',
     observationsSignature = '',
     observerKey = 0,
@@ -51,6 +56,68 @@ export async function createApplication({
   const samples = createObservers(),
     get = () => store.getState(),
     project = () => get().project;
+  const displayedAnalysis = () => (plan === 'before' && get().prior ? get().prior : get().analysis);
+  const displayedStage = () =>
+    plan === 'before' && project().baseline ? project().baseline.stage : project().stage;
+  const seatMap = new SeatMap($('#seat-map-host'), {
+    selectPoint,
+    selectEquipment,
+    selectRegion: (id) => document.querySelector(`[data-region="${id}"]`).click(),
+  });
+  const renderReview = createReviewDetails(selectPoint);
+  function setDisplay(mode) {
+    if (mode === '3d' && plan !== 'current') {
+      plan = 'current';
+      syncScene();
+      refreshResults();
+    }
+    display = mode;
+    $('#seat-map-host').classList.toggle('hidden', mode !== 'map');
+    $('#canvas-host').classList.toggle('hidden', mode !== '3d');
+    $('#three-tools').classList.toggle('hidden', mode !== '3d');
+    document
+      .querySelectorAll('.map-only')
+      .forEach((el) => el.classList.toggle('hidden', mode !== 'map'));
+    document.querySelectorAll('[data-display]').forEach((button) => {
+      button.classList.toggle('active', button.dataset.display === mode);
+      button.setAttribute('aria-pressed', String(button.dataset.display === mode));
+    });
+    if (mode === '3d') {
+      scene?.resize?.();
+      scene?.invalidate?.();
+    }
+  }
+  function syncScene() {
+    const baseline = plan === 'before' && project().baseline;
+    scene?.setStage(baseline ? baseline.stage : project().stage);
+    scene?.setEquipment(baseline ? baseline.equipment : project().equipment, get().selectedId);
+    if (displayedAnalysis()) scene?.setAnalysis(displayedAnalysis());
+  }
+  document
+    .querySelectorAll('[data-display]')
+    .forEach((button) => (button.onclick = () => setDisplay(button.dataset.display)));
+  document.querySelectorAll('[data-plan]').forEach(
+    (button) =>
+      (button.onclick = () => {
+        plan = button.dataset.plan;
+        setDisplay('map');
+        syncScene();
+        refreshResults();
+        refreshSelected();
+      }),
+  );
+  document
+    .querySelectorAll('[data-map-zoom]')
+    .forEach((button) => (button.onclick = () => seatMap.zoom(Number(button.dataset.mapZoom))));
+  $('#load-example').onclick = () => {
+    plan = 'current';
+    regionId = 'all';
+    store.replace(parseProject(structuredClone(demoProject)));
+    refreshStage();
+    refreshInspector();
+    setDisplay('map');
+    toast('가상 장비 배치 예제를 불러왔습니다. 변경 취소로 되돌릴 수 있습니다.');
+  };
   const exploration = bindExploration({
     onRegion(id) {
       regionId = id;
@@ -61,17 +128,18 @@ export async function createApplication({
           .forEach((button) => button.classList.toggle('active', button.dataset.view === 'orbit'));
       }
       const point = get().analysis?.points.find((p) => p.id === get().selectedPointId);
-      if (point && id !== 'all' && observationRegion(point, project().stage) !== id)
+      if (point && id !== 'all' && observationRegion(point, displayedStage()) !== id)
         selectPoint(null);
       scene?.setRegion?.(id);
       refreshResults();
     },
     onEnter() {
       const point = representativePoint(
-        regionSummary(get().analysis, project().stage, regionId).points,
+        regionSummary(displayedAnalysis(), displayedStage(), regionId).points,
       );
       if (!point) return;
       selectPoint(point);
+      setDisplay('3d');
       scene?.setView('eye');
       document
         .querySelectorAll('[data-view]')
@@ -95,7 +163,7 @@ export async function createApplication({
   const coordinator = createAnalysisCoordinator(client, {
     onResult({ current, prior }) {
       store.setState({ analysis: current, prior, error: null });
-      scene?.setAnalysis(current);
+      syncScene();
       refreshSelected();
     },
     onBusy: (busy) => store.setState({ busy }),
@@ -107,8 +175,12 @@ export async function createApplication({
       busy: get().busy || optimizing,
       description: describe(),
       engineMode,
+      displayAnalysis: displayedAnalysis(),
     });
-    renderExploration(get().analysis, project().stage, regionId);
+    renderExploration(displayedAnalysis(), displayedStage(), regionId);
+    const reviewState = { ...get(), regionId, plan };
+    seatMap.update(reviewState);
+    renderReview(reviewState);
   }
   function requestAnalysis() {
     const p = project(),
@@ -139,6 +211,7 @@ export async function createApplication({
     );
   }
   function edit(fn, options) {
+    plan = 'current';
     store.edit(fn, options);
   }
   function selected() {
@@ -165,11 +238,13 @@ export async function createApplication({
     });
   }
   function selectEquipment(id) {
+    plan = 'current';
     store.setState({ selectedId: id });
+    syncScene();
     exploration.showPanel('edit');
   }
   function refreshSelected() {
-    const point = get().analysis?.points.find((p) => p.id === get().selectedPointId);
+    const point = displayedAnalysis()?.points.find((p) => p.id === get().selectedPointId);
     $('#selected-badge').classList.toggle('hidden', !point);
     scene?.showSightlines(point || null);
     if (!point) {
@@ -183,8 +258,8 @@ export async function createApplication({
     if (scene?.mode === 'eye') scene.setView('eye');
   }
   function selectPoint(point) {
-    if (point && regionId !== 'all' && observationRegion(point, project().stage) !== regionId) {
-      regionId = observationRegion(point, project().stage);
+    if (point && regionId !== 'all' && observationRegion(point, displayedStage()) !== regionId) {
+      regionId = observationRegion(point, displayedStage());
       scene?.setRegion?.(regionId);
     }
     store.setState({ selectedPointId: point?.id ?? null });
@@ -206,6 +281,7 @@ export async function createApplication({
   ];
   const unsubscribe = store.subscribe((state, previous) => {
     if (state.project !== previous.project) {
+      plan = 'current';
       renderEquipment(state.project.equipment, state.selectedId, selectEquipment);
       // Keep the active input and its caret/drag gesture intact while values change.
       const inspectorActive = $('#inspector-fields')?.contains(document.activeElement);
@@ -290,12 +366,35 @@ export async function createApplication({
           prior: get().prior,
           scene,
           description: describe(),
+          image:
+            display === 'map'
+              ? 'data:image/svg+xml;charset=utf-8,' +
+                encodeURIComponent(
+                  seatMapSVG({
+                    analysis: get().analysis,
+                    prior: get().prior,
+                    project: project(),
+                    selectedPointId: get().selectedPointId,
+                    regionId,
+                    plan: 'current',
+                  }),
+                )
+              : undefined,
         });
     } catch (error) {
       toast(error.message);
     }
   };
-  bindViewerActions({ project, edit, get, getScene: () => scene, selectPoint });
+  bindViewerActions({
+    project,
+    edit,
+    get,
+    getScene: () => scene,
+    selectPoint,
+    getMap: () => $('#seat-map-host svg')?.outerHTML,
+    getDisplay: () => display,
+    on3D: () => setDisplay('3d'),
+  });
   // Load observations independently; a WebGL failure must not disable analysis.
   const dataReady = (async () => {
     try {
@@ -317,6 +416,7 @@ export async function createApplication({
       scene = await factory($('#canvas-host'), {
         selectEquipment,
         moveEquipment(id, x, z) {
+          if (plan === 'before') return toast('현재안으로 전환한 뒤 장비를 이동하세요.');
           edit((p) => {
             Object.assign(
               p.equipment.find((e) => e.id === id),
@@ -396,6 +496,8 @@ export async function createApplication({
     regionId,
     selectedPointId: get().selectedPointId,
     viewMode: scene?.mode,
+    display,
+    plan,
     equipment: clone(project().equipment),
     customPoints: clone(project().customPoints),
     busy: get().busy,
@@ -416,6 +518,7 @@ export async function createApplication({
       disposed = true;
       unsubscribe();
       exploration.dispose();
+      seatMap.dispose();
       coordinator.dispose();
       scene?.dispose?.();
       window.removeEventListener('pagehide', flushStorage);

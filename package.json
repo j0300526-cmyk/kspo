@@ -1,6 +1,6 @@
 {
   "name": "garim-zero",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "comlink": "^4.4.2",
+    "d3-polygon": "^3.0.2",
     "idb-keyval": "^6.3.0",
     "lucide": "^0.468.0",
     "three": "^0.181.0",
@@ -20,6 +21,7 @@
     "zustand": "^5.1.0"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "esbuild": "^0.28.2",
     "fake-indexeddb": "^6.2.8",
     "happy-dom": "^21.0.4",
