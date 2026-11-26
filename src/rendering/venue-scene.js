@@ -20,16 +20,17 @@ export class VenueScene {
     this.modelMode = 'schematic';
     this.showHeat = true;
     this.showRoof = false;
+    this.regionId = 'all';
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#252a30');
-    this.scene.fog = new THREE.Fog('#252a30', 110, 300);
+    this.scene.background = new THREE.Color('#f5f6f7');
+    this.scene.fog = new THREE.Fog('#f5f6f7', 170, 400);
     this.camera = new THREE.PerspectiveCamera(43, 1, 0.05, 900);
     this.camera.position.set(70, 65, 82);
     this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.35;
+    this.renderer.toneMappingExposure = 1.1;
     host.appendChild(this.renderer.domElement);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.target.set(0, 3, 0);
@@ -37,21 +38,21 @@ export class VenueScene {
     this.controls.maxPolarAngle = Math.PI * 0.49;
     this.controls.minDistance = 3;
     this.controls.maxDistance = 230;
-    this.scene.add(new THREE.HemisphereLight(0xe6edf8, 0x303c50, 2.5));
-    const light = new THREE.DirectionalLight(0xf2f5fb, 3);
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x81919a, 1.8));
+    const light = new THREE.DirectionalLight(0xffffff, 2);
     light.position.set(40, 80, 30);
     this.scene.add(light);
-    const fill = new THREE.DirectionalLight(0xa8bfdc, 1);
+    const fill = new THREE.DirectionalLight(0xd9e8f0, 0.6);
     fill.position.set(-40, 20, -20);
     this.scene.add(fill);
     this.floor = new THREE.Mesh(
       new THREE.PlaneGeometry(350, 350),
-      new THREE.MeshStandardMaterial({ color: 0x282f39, roughness: 1 }),
+      new THREE.MeshBasicMaterial({ color: 0xf5f6f7 }),
     );
     this.floor.rotation.x = -Math.PI / 2;
     this.floor.position.y = -0.3;
     this.scene.add(this.floor);
-    const grid = new THREE.GridHelper(240, 80, 0x424e61, 0x313b4a);
+    const grid = (this.grid = new THREE.GridHelper(240, 80, 0xdce2e6, 0xe8ecef));
     grid.position.y = -0.25;
     this.scene.add(grid);
     this.schematic = createSchematic();
@@ -153,6 +154,7 @@ export class VenueScene {
   setStage(stage) {
     this.stage = stage;
     this.stageLayer.update(stage);
+    if (this.result && this.regionId !== 'all') this.setAnalysis(this.result);
     this.invalidate();
   }
   setEquipment(equipment, selectedId) {
@@ -164,12 +166,16 @@ export class VenueScene {
   }
   setAnalysis(result) {
     this.result = result;
-    this.samples = this.observationLayer.update(result, this.showHeat);
+    this.samples = this.observationLayer.update(result, this.showHeat, this.regionId, this.stage);
     if (this.selectedPoint) {
       const point = result.points.find((p) => p.id === this.selectedPoint.id);
       if (point) this.showSightlines(point);
     }
     this.invalidate();
+  }
+  setRegion(id) {
+    this.regionId = id;
+    if (this.result) this.setAnalysis(this.result);
   }
   showSightlines(point) {
     this.selectedPoint = point;
@@ -178,7 +184,7 @@ export class VenueScene {
     if (!point || !this.result) return;
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(0.42, 12, 8),
-      new THREE.MeshBasicMaterial({ color: 0xd6e5ff }),
+      new THREE.MeshBasicMaterial({ color: 0xd64436 }),
     );
     sphere.position.set(point.x, point.y, point.z);
     this.linesGroup.add(sphere);
@@ -188,14 +194,14 @@ export class VenueScene {
           new THREE.Vector3(point.x, point.y, point.z),
           new THREE.Vector3(target.x, target.y, target.z),
         ]),
-        new THREE.LineBasicMaterial({ color: 0xc1d6fa, transparent: true, opacity: 0.6 }),
+        new THREE.LineBasicMaterial({ color: 0xd64436, transparent: true, opacity: 0.65 }),
       );
       this.linesGroup.add(line);
     }
   }
   setView(mode) {
     this.mode = mode;
-    const span = this.modelMode === 'official' ? 140 : 100;
+    const span = this.modelMode === 'official' ? 118 : 100;
     const distance =
       (span / (2 * Math.tan((this.camera.fov * Math.PI) / 360)) / Math.min(1, this.camera.aspect)) *
       1.08;
@@ -214,7 +220,7 @@ export class VenueScene {
       this.controls.minDistance = 3;
     } else {
       this.camera.position.copy(
-        new THREE.Vector3(1, 0.9, 1.15).normalize().multiplyScalar(distance),
+        new THREE.Vector3(0.65, 1.2, 1.1).normalize().multiplyScalar(distance),
       );
       this.controls.target.set(0, 3, 0);
       this.controls.minDistance = 3;
@@ -318,6 +324,7 @@ export class VenueScene {
   setModelMode(mode) {
     this.modelMode = mode;
     this.schematic.visible = mode === 'schematic';
+    this.grid.visible = mode === 'schematic';
     if (this.officialModel) this.officialModel.visible = mode === 'official';
     this.invalidate();
   }
@@ -330,13 +337,14 @@ export class VenueScene {
     this.officialModel.name = 'official-venue';
     object.traverse((o) => {
       if (o.isMesh) {
+        const old = Array.isArray(o.material) ? o.material : [o.material];
+        old.forEach((material) => material.dispose());
         o.material = new THREE.MeshStandardMaterial({
-          color: 0x8794a8,
-          roughness: 0.95,
+          color: 0xb8c4cc,
+          roughness: 0.9,
           side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.24,
-          depthWrite: false,
+          transparent: false,
+          depthWrite: true,
         });
         if (o.name.toLowerCase().includes('roof')) o.visible = this.showRoof;
       }

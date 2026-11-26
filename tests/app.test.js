@@ -89,6 +89,23 @@ test('application flow: official observations, equipment edits, undo, comparison
   assert.equal(diagnostic().count, 7382);
   assert.equal(diagnostic().modelObserverCount, 7382);
   assert.equal($('#observer-mode').value, 'official');
+  assert.equal($('#panel-explore').hidden, false);
+  $('[data-region="left"]').click();
+  assert.equal(diagnostic().regionId, 'left');
+  assert.equal(diagnostic().count, 7382, 'region exploration preserves the global analysis');
+  assert.match($('#region-count').textContent, /1,974/);
+  $('#region-enter').click();
+  assert.ok(diagnostic().selectedPointId);
+  assert.equal(diagnostic().viewMode, 'eye');
+  $('#tab-edit').click();
+  assert.equal($('#panel-explore').hidden, true);
+  assert.equal($('#panel-edit').hidden, false);
+  $('#tab-edit').dispatchEvent(
+    new window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }),
+  );
+  assert.equal($('#panel-explore').hidden, false);
+  $('[data-region="all"]').click();
+  $('#tab-edit').click();
   const before = diagnostic().mean;
   change('#eq-height', '0.3');
   await app.coordinator.flush();
@@ -128,6 +145,7 @@ test('application flow: official observations, equipment edits, undo, comparison
   change('#observer-mode', 'custom');
   await app.coordinator.flush();
   assert.equal(diagnostic().count, 0);
+  assert.equal($('#region-enter').disabled, true);
   assert.equal($('#metric-visible').textContent, '—');
   $('#eye-view').click();
   assert.match($('#toast').textContent, /관찰점/);

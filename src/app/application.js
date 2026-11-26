@@ -14,6 +14,12 @@ import { renderEquipment, renderInspector } from '../ui/equipment.js';
 import { renderResults } from '../ui/results.js';
 import { sourceContent } from '../ui/sources.js';
 import { showReport } from '../features/reports.js';
+import { renderExploration, bindExploration } from '../ui/exploration.js';
+import {
+  observationRegion,
+  regionSummary,
+  representativePoint,
+} from '../domain/observation-regions.js';
 
 export async function createApplication({
   createScene,
@@ -35,7 +41,8 @@ export async function createApplication({
     modelObservers = [],
     officialMeta = null,
     engineMode = 'starting',
-    disposed = false;
+    disposed = false,
+    regionId = 'all';
   let geometrySignature = '',
     observationsSignature = '',
     observerKey = 0,
@@ -44,6 +51,33 @@ export async function createApplication({
   const samples = createObservers(),
     get = () => store.getState(),
     project = () => get().project;
+  const exploration = bindExploration({
+    onRegion(id) {
+      regionId = id;
+      if (scene?.mode === 'eye') {
+        scene.setView('orbit');
+        document
+          .querySelectorAll('[data-view]')
+          .forEach((button) => button.classList.toggle('active', button.dataset.view === 'orbit'));
+      }
+      const point = get().analysis?.points.find((p) => p.id === get().selectedPointId);
+      if (point && id !== 'all' && observationRegion(point, project().stage) !== id)
+        selectPoint(null);
+      scene?.setRegion?.(id);
+      refreshResults();
+    },
+    onEnter() {
+      const point = representativePoint(
+        regionSummary(get().analysis, project().stage, regionId).points,
+      );
+      if (!point) return;
+      selectPoint(point);
+      scene?.setView('eye');
+      document
+        .querySelectorAll('[data-view]')
+        .forEach((button) => button.classList.toggle('active', button.dataset.view === 'eye'));
+    },
+  });
   const describe = () =>
     project().observerMode === 'custom'
       ? `직접 지정 ${project().customPoints.length}개`
@@ -74,6 +108,7 @@ export async function createApplication({
       description: describe(),
       engineMode,
     });
+    renderExploration(get().analysis, project().stage, regionId);
   }
   function requestAnalysis() {
     const p = project(),
@@ -131,12 +166,16 @@ export async function createApplication({
   }
   function selectEquipment(id) {
     store.setState({ selectedId: id });
+    exploration.showPanel('edit');
   }
   function refreshSelected() {
     const point = get().analysis?.points.find((p) => p.id === get().selectedPointId);
     $('#selected-badge').classList.toggle('hidden', !point);
     scene?.showSightlines(point || null);
-    if (!point) return;
+    if (!point) {
+      $('#point-description').textContent = '공연장 화면의 점을 누르면 관찰점 정보가 표시됩니다.';
+      return;
+    }
     $('#selected-badge').textContent =
       `${point.id} · ${point.total - point.blocked}/${point.total} 지점 보임`;
     $('#point-description').textContent =
@@ -144,7 +183,12 @@ export async function createApplication({
     if (scene?.mode === 'eye') scene.setView('eye');
   }
   function selectPoint(point) {
+    if (point && regionId !== 'all' && observationRegion(point, project().stage) !== regionId) {
+      regionId = observationRegion(point, project().stage);
+      scene?.setRegion?.(regionId);
+    }
     store.setState({ selectedPointId: point?.id ?? null });
+    if (point) exploration.showPanel('explore');
     refreshSelected();
   }
   function refreshStage() {
@@ -302,6 +346,7 @@ export async function createApplication({
         return;
       }
       scene.setStage(project().stage);
+      scene.setRegion?.(regionId);
       scene.setEquipment(project().equipment, get().selectedId);
       if (get().analysis) scene.setAnalysis(get().analysis);
       officialMeta = await scene.loadOfficial();
@@ -344,6 +389,9 @@ export async function createApplication({
     officialLoaded: !!scene?.officialModel,
     modelObserverCount: modelObservers.length,
     observerMode: project().observerMode,
+    regionId,
+    selectedPointId: get().selectedPointId,
+    viewMode: scene?.mode,
     equipment: clone(project().equipment),
     customPoints: clone(project().customPoints),
     busy: get().busy,
@@ -363,6 +411,7 @@ export async function createApplication({
     async dispose() {
       disposed = true;
       unsubscribe();
+      exploration.dispose();
       coordinator.dispose();
       scene?.dispose?.();
       window.removeEventListener('pagehide', flushStorage);

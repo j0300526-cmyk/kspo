@@ -62,8 +62,8 @@ export class EquipmentLayer {
       item.body.position.y = e.height / 2;
       item.edge.scale.copy(item.body.scale);
       item.edge.position.copy(item.body.position);
-      item.body.material.color.setHex(e.id === selectedId ? 0xd8ab62 : 0x8797af);
-      item.edge.material.color.setHex(e.id === selectedId ? 0xffdda7 : 0xc1ccdd);
+      item.body.material.color.setHex(e.id === selectedId ? 0xd88b55 : 0x647b89);
+      item.edge.material.color.setHex(e.id === selectedId ? 0xf7c397 : 0x9fb1ba);
       if (e.type === 'camera') {
         item.detail.position.set(0, e.height + 0.275, 0);
         item.detail.scale.x = Math.min(1, e.width * 0.4);

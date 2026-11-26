@@ -6,6 +6,9 @@ export async function preparePicking(object, onProgress = () => {}) {
   const meshes = [];
   object.traverse((o) => {
     if (o.isMesh) {
+      // The public converted GLB omits normals. Standard lighting needs these
+      // before replacing its original unlit material with a shaded surface.
+      if (!o.geometry.getAttribute('normal')) o.geometry.computeVertexNormals();
       o.raycast = acceleratedRaycast;
       if ((o.geometry.index?.count || o.geometry.attributes.position.count) > 30000) meshes.push(o);
     }
