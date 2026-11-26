@@ -54,6 +54,7 @@ export class VenueScene {
     this.scene.add(this.floor);
     const grid = (this.grid = new THREE.GridHelper(240, 80, 0xdce2e6, 0xe8ecef));
     grid.position.y = -0.25;
+    grid.visible = false;
     this.scene.add(grid);
     this.schematic = createSchematic();
     this.scene.add(this.schematic);
@@ -165,12 +166,14 @@ export class VenueScene {
     this.invalidate();
   }
   setAnalysis(result) {
+    const first = !this.result || this.result.observerKey !== result.observerKey;
     this.result = result;
     this.samples = this.observationLayer.update(result, this.showHeat, this.regionId, this.stage);
     if (this.selectedPoint) {
       const point = result.points.find((p) => p.id === this.selectedPoint.id);
       if (point) this.showSightlines(point);
     }
+    if (first && this.mode !== 'eye') this.setView(this.mode);
     this.invalidate();
   }
   setRegion(id) {
@@ -188,23 +191,10 @@ export class VenueScene {
     );
     sphere.position.set(point.x, point.y, point.z);
     this.linesGroup.add(sphere);
-    for (const target of this.result.targets) {
-      const line = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(point.x, point.y, point.z),
-          new THREE.Vector3(target.x, target.y, target.z),
-        ]),
-        new THREE.LineBasicMaterial({ color: 0xd64436, transparent: true, opacity: 0.65 }),
-      );
-      this.linesGroup.add(line);
-    }
+    // A single selection marker stays readable without nine crossing rays.
   }
   setView(mode) {
     this.mode = mode;
-    const span = this.modelMode === 'official' ? 118 : 100;
-    const distance =
-      (span / (2 * Math.tan((this.camera.fov * Math.PI) / 360)) / Math.min(1, this.camera.aspect)) *
-      1.08;
     if (mode === 'eye' && this.selectedPoint) {
       const p = this.selectedPoint;
       this.camera.position.set(p.x, p.y, p.z);
@@ -214,15 +204,51 @@ export class VenueScene {
         this.stage.z,
       );
       this.controls.minDistance = 0.1;
-    } else if (mode === 'top') {
-      this.camera.position.set(0, distance, 0.01);
-      this.controls.target.set(0, 0, 0);
-      this.controls.minDistance = 3;
     } else {
-      this.camera.position.copy(
-        new THREE.Vector3(0.65, 1.2, 1.1).normalize().multiplyScalar(distance),
-      );
-      this.controls.target.set(0, 3, 0);
+      const points = this.result?.points.length
+        ? this.result.points
+        : [
+            { x: -55, y: 0, z: -55 },
+            { x: 55, y: 12, z: 55 },
+          ];
+      const bounds = new THREE.Box3();
+      for (const point of points)
+        bounds.expandByPoint(new THREE.Vector3(point.x, point.y, point.z));
+      if (this.stage) {
+        for (const x of [-1, 1])
+          for (const z of [-1, 1])
+            bounds.expandByPoint(
+              new THREE.Vector3(
+                this.stage.x + (x * this.stage.width) / 2,
+                this.stage.height,
+                this.stage.z + (z * this.stage.depth) / 2,
+              ),
+            );
+      }
+      const center = bounds.getCenter(new THREE.Vector3());
+      const direction = new THREE.Vector3(
+        0,
+        mode === 'top' ? 1 : 1.7,
+        mode === 'top' ? 0.0001 : 1,
+      ).normalize();
+      const up = new THREE.Vector3(0, direction.z, -direction.y);
+      const tanV = Math.tan((this.camera.fov * Math.PI) / 360),
+        tanH = tanV * this.camera.aspect;
+      let distance = 40;
+      for (const x of [bounds.min.x, bounds.max.x])
+        for (const y of [bounds.min.y, bounds.max.y])
+          for (const z of [bounds.min.z, bounds.max.z]) {
+            const relative = new THREE.Vector3(x, y, z).sub(center),
+              depth = relative.dot(direction);
+            distance = Math.max(
+              distance,
+              depth + (Math.abs(relative.x) * 1.18) / tanH,
+              depth + (Math.abs(relative.dot(up)) * 1.18) / tanV,
+            );
+          }
+      this.camera.position.copy(center).addScaledVector(direction, distance);
+      this.controls.target.copy(center);
+      this.controls.maxDistance = Math.max(350, distance * 2);
       this.controls.minDistance = 3;
     }
     this.controls.update();
@@ -324,7 +350,7 @@ export class VenueScene {
   setModelMode(mode) {
     this.modelMode = mode;
     this.schematic.visible = mode === 'schematic';
-    this.grid.visible = mode === 'schematic';
+    this.grid.visible = false;
     if (this.officialModel) this.officialModel.visible = mode === 'official';
     this.invalidate();
   }
@@ -350,9 +376,9 @@ export class VenueScene {
       }
     });
     this.scene.add(object);
-    this.setModelMode('official');
+    this.setModelMode(meta.custom ? 'official' : this.modelMode);
     this.meta = meta;
-    this.setView('orbit');
+    if (meta.custom) this.setView('orbit');
   }
   async loadOfficial() {
     const ticket = ++this.loadTicket;

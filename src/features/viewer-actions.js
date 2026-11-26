@@ -39,10 +39,10 @@ export function bindViewerActions({ project, edit, get, getScene, selectPoint })
     getScene()?.setModelMode(e.target.value);
     $('#viewer-model-label').textContent =
       e.target.value === 'schematic'
-        ? 'KSPO DOME / 개략도'
+        ? 'KSPO DOME / 간단 시야도'
         : getScene()?.meta?.custom
           ? '사용자 모델'
-          : 'KSPO DOME / 공개 3D 모델';
+          : 'KSPO DOME / 원본 건물 모델';
   };
   $('#add-point').onclick = () => {
     addPointMode = !addPointMode;

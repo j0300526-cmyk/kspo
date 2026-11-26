@@ -13,13 +13,13 @@ export function renderLayout({ name, stage }) {
   </header>
   <main class="workspace">
     <section class="center" aria-label="공연장 탐색">
-      <div class="venue-heading"><div><div class="venue-location">서울 · 올림픽공원</div><h1>KSPO DOME<span>체조경기장</span></h1></div><span class="venue-caption">공개 3D 모델</span></div>
+      <div class="venue-heading"><div><div class="venue-location">서울 · 올림픽공원</div><h1>KSPO DOME<span>체조경기장</span></h1></div><span class="venue-caption">공개 관찰점 기반</span></div>
       <div class="viewer-card" id="viewer-card">
         <div class="canvas-host" id="canvas-host" role="img" aria-label="공연장 3D 화면. 관찰점을 클릭하면 무대까지의 시야를 확인합니다."></div>
         <div class="viewer-toolbar"><div class="segmented" aria-label="보기 방식"><button data-view="orbit" class="active">${ico('box')}3D</button><button data-view="top">${ico('grid-2x2')}평면</button><button data-view="eye" id="eye-view">${ico('eye')}관객 시점</button></div><div class="viewer-buttons"><button class="icon-btn active" id="heat-toggle" title="가림 분석 색상" aria-label="가림 분석 색상 표시 전환" aria-pressed="true">${ico('layers-3')}</button><button class="icon-btn" id="fit-view" title="전체 보기" aria-label="전체 보기">${ico('focus')}</button><button class="icon-btn" id="snapshot" title="화면 PNG 저장" aria-label="화면 PNG 저장">${ico('camera')}</button></div></div>
-        <div class="model-controls"><select id="model-mode" class="select" aria-label="공연장 모델"><option value="schematic">개략 모델</option><option value="official" disabled>공식 모델 로딩 중</option></select><span id="render-status">3D 로딩</span></div>
+        <div class="model-controls"><select id="model-mode" class="select" aria-label="공연장 모델"><option value="schematic">간단 보기</option><option value="official" disabled>원본 모델 로딩 중</option></select><span id="render-status">3D 로딩</span></div>
         <div id="model-progress" class="model-progress hidden" role="status"></div><div id="selected-badge" class="selected-badge hidden"></div>
-        <div class="viewer-title"><strong id="viewer-model-label">KSPO DOME / 개략 모델</strong><p id="viewer-observer-label">모델 관찰점 · 공식 좌석번호 아님</p></div>
+        <div class="viewer-title"><strong id="viewer-model-label">KSPO DOME / 간단 시야도</strong><p id="viewer-observer-label">모델 관찰점 · 공식 좌석번호 아님</p></div>
         <div class="viewer-bottom"><div class="legend"><span><i class="green-dot"></i>가림 없음</span><span><i class="orange-dot"></i>일부 가림</span><span><i class="red-dot"></i>50% 이상 가림</span></div><span class="viewer-hint">드래그로 회전 · 휠로 확대</span></div>
       </div>
       <div class="map-status"><span id="analysis-status" role="status">준비 중</span><span id="engine-mode"></span><button id="cancel-analysis" class="text-button">다시 계산</button><span class="status-spacer"></span><span>전체 관찰점 기준</span></div>

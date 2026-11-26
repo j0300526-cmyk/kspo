@@ -15,7 +15,7 @@ export class ObservationLayer {
       this.dispose();
       this.capacity = 2 ** Math.ceil(Math.log2(Math.max(1, result.points.length)));
       this.mesh = new THREE.InstancedMesh(
-        new THREE.CylinderGeometry(0.3, 0.3, 0.12, 8),
+        new THREE.CylinderGeometry(0.24, 0.24, 0.08, 8),
         new THREE.MeshBasicMaterial({ depthTest: true, depthWrite: false }),
         this.capacity,
       );
@@ -45,8 +45,8 @@ export class ObservationLayer {
               ? '#d84e43'
               : p.ratio > 0
                 ? '#d9a051'
-                : '#66808e'
-            : '#66808e',
+                : '#267b9c'
+            : '#267b9c',
       );
       this.mesh.setColorAt(i, this.color);
     });

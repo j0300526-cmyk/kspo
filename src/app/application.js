@@ -346,6 +346,7 @@ export async function createApplication({
         return;
       }
       scene.setStage(project().stage);
+      scene.setModelMode('schematic');
       scene.setRegion?.(regionId);
       scene.setEquipment(project().equipment, get().selectedId);
       if (get().analysis) scene.setAnalysis(get().analysis);
@@ -353,9 +354,10 @@ export async function createApplication({
       if (disposed || !officialMeta) return;
       $('#venue-status').textContent = '한국체육산업개발 공개 모델';
       $('#model-mode option[value="official"]').disabled = false;
-      $('#model-mode option[value="official"]').textContent = '공식 모델';
-      $('#model-mode').value = 'official';
-      $('#viewer-model-label').textContent = 'KSPO DOME / 공개 3D 모델';
+      $('#model-mode option[value="official"]').textContent = '원본 건물 모델';
+      $('#model-mode').value = scene.modelMode;
+      $('#viewer-model-label').textContent =
+        scene.modelMode === 'official' ? 'KSPO DOME / 원본 건물 모델' : 'KSPO DOME / 간단 시야도';
       $('#model-progress').classList.add('hidden');
       $('#render-status').textContent = '3D 준비됨';
       if (project().customModel) {
@@ -365,8 +367,10 @@ export async function createApplication({
       }
     } catch (error) {
       $('#model-progress').classList.add('hidden');
-      $('#render-status').textContent = '3D 사용 불가';
-      $('#venue-status').textContent = '3D 모델 로딩 실패 / 수치 분석 사용 가능';
+      $('#render-status').textContent = scene ? '간단 보기' : '3D 사용 불가';
+      $('#venue-status').textContent = scene
+        ? '원본 모델 로딩 실패 · 간단 보기 사용 중'
+        : '3D 모델 로딩 실패 / 수치 분석 사용 가능';
       if (!scene)
         $('#canvas-host').innerHTML =
           '<div class="error-fallback">3D 화면을 시작하지 못했습니다.<br/>수치 분석과 프로젝트 저장은 계속 사용할 수 있습니다.</div>';
