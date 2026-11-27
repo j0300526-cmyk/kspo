@@ -116,7 +116,7 @@ export async function createApplication({
     refreshStage();
     refreshInspector();
     setDisplay('map');
-    toast('가상 장비 배치 예제를 불러왔습니다. 변경 취소로 되돌릴 수 있습니다.');
+    toast('예제를 불러왔어요. 이전 변경 취소로 원래 배치를 복원할 수 있어요.');
   };
   const exploration = bindExploration({
     onRegion(id) {
@@ -234,7 +234,7 @@ export async function createApplication({
           p.equipment = p.equipment.filter((e) => e.id !== id);
         });
       },
-      onInvalid: () => toast('입력 범위를 확인해주세요.'),
+      onInvalid: () => toast('표시된 범위 안의 숫자를 입력해 주세요.'),
     });
   }
   function selectEquipment(id) {
@@ -248,7 +248,7 @@ export async function createApplication({
     $('#selected-badge').classList.toggle('hidden', !point);
     scene?.showSightlines(point || null);
     if (!point) {
-      $('#point-description').textContent = '공연장 화면의 점을 누르면 관찰점 정보가 표시됩니다.';
+      $('#point-description').textContent = '지도 위 점을 누르면 그 위치의 시야를 보여드려요.';
       return;
     }
     $('#selected-badge').textContent =
@@ -323,7 +323,7 @@ export async function createApplication({
         p = project(),
         id = get().selectedId;
       $('#optimize').disabled = true;
-      $('#optimize').textContent = '위치 비교 중';
+      $('#optimize').textContent = '장비 위치를 비교하고 있어요';
       refreshResults();
       const best = await client.run(
         'optimize',
@@ -336,13 +336,14 @@ export async function createApplication({
           next.baseline ??= { stage: clone(next.stage), equipment: clone(next.equipment) };
           next.equipment = best.equipment;
         });
-        toast('가림이 적은 위치를 적용했습니다.');
-      } else toast('검토한 후보 중 개선되는 위치가 없습니다.');
+        toast('가림이 적은 위치를 적용했어요.');
+      } else
+        toast('지금 검토한 후보에서는 시야가 더 좋아지지 않았어요. 다른 장비도 비교해 보세요.');
     } catch (error) {
       if (error.name !== 'AbortError') toast(error.message);
     } finally {
       optimizing = false;
-      $('#optimize').innerHTML = `${ico('sparkles')}위치 비교`;
+      $('#optimize').innerHTML = `${ico('sparkles')}위치 후보 찾기`;
       icons();
       refreshResults();
       refreshInspector();
@@ -352,7 +353,7 @@ export async function createApplication({
     client.cancel();
     geometrySignature = '';
     requestAnalysis();
-    toast('현재 배치의 분석으로 전환했습니다.');
+    toast('현재 배치의 분석으로 전환했어요.');
   };
   $('#sources').onclick = () => modal('자료 / 분석 기준', sourceContent(officialMeta));
   $('#report').onclick = async () => {
@@ -399,11 +400,12 @@ export async function createApplication({
   const dataReady = (async () => {
     try {
       const response = await fetch('/models/observation-points.json');
-      if (!response.ok) throw new Error('관찰점 로딩 실패');
+      if (!response.ok) throw new Error('관찰점 파일을 읽지 못했어요. 새로고침해 주세요.');
       modelObservers = parseObservations(await response.json());
       if (!disposed) requestAnalysis();
     } catch (error) {
-      $('#venue-status').textContent = '관찰점 로딩 실패 / 개략 표본 사용';
+      $('#venue-status').textContent =
+        '관찰점 파일을 읽지 못해 개략 표본으로 계산해요. 새로고침하면 다시 불러와요.';
       toast(error.message);
     }
   })();
@@ -416,7 +418,7 @@ export async function createApplication({
       scene = await factory($('#canvas-host'), {
         selectEquipment,
         moveEquipment(id, x, z) {
-          if (plan === 'before') return toast('현재안으로 전환한 뒤 장비를 이동하세요.');
+          if (plan === 'before') return toast('현재안을 선택하면 장비를 옮길 수 있어요.');
           edit((p) => {
             Object.assign(
               p.equipment.find((e) => e.id === id),
@@ -428,7 +430,7 @@ export async function createApplication({
         selectPoint,
         addPoint(point) {
           if (project().customPoints.length >= 100)
-            return toast('직접 지정 관찰점은 최대 100개입니다.');
+            return toast('관찰점은 100개까지 직접 추가할 수 있어요.');
           const id = `P-${crypto.randomUUID().slice(0, 8)}`;
           edit((p) => p.customPoints.push({ ...point, id, block: '직접 지정', row: 0 }));
           store.setState({ selectedPointId: id });
@@ -459,21 +461,22 @@ export async function createApplication({
       $('#viewer-model-label').textContent =
         scene.modelMode === 'official' ? 'KSPO DOME / 원본 건물 모델' : 'KSPO DOME / 간단 시야도';
       $('#model-progress').classList.add('hidden');
-      $('#render-status').textContent = '3D 준비됨';
+      $('#render-status').textContent = '3D를 준비했어요';
       if (project().customModel) {
         scene.setModelMode('schematic');
         $('#model-mode').value = 'schematic';
-        $('#venue-status').textContent = '사용자 모델을 다시 불러오세요: ' + project().customModel;
+        $('#venue-status').textContent =
+          '이 모델 파일을 다시 선택해 주세요: ' + project().customModel;
       }
     } catch (error) {
       $('#model-progress').classList.add('hidden');
-      $('#render-status').textContent = scene ? '간단 보기' : '3D 사용 불가';
+      $('#render-status').textContent = scene ? '간단 보기' : '3D를 다시 확인해 주세요';
       $('#venue-status').textContent = scene
-        ? '원본 모델 로딩 실패 · 간단 보기 사용 중'
-        : '3D 모델 로딩 실패 / 수치 분석 사용 가능';
+        ? '원본 모델을 다시 불러오려면 새로고침해 주세요. 지금은 간단 시야도를 보여드려요.'
+        : '지도와 수치 분석을 계속 사용할 수 있어요. 3D는 새로고침한 뒤 다시 확인해 주세요.';
       if (!scene)
         $('#canvas-host').innerHTML =
-          '<div class="error-fallback">3D 화면을 시작하지 못했습니다.<br/>수치 분석과 프로젝트 저장은 계속 사용할 수 있습니다.</div>';
+          '<div class="error-fallback">3D 화면을 시작하지 못했어요.<br/>지도 분석과 프로젝트 저장을 계속 사용할 수 있어요.</div>';
       console.warn('3D initialization', error);
     }
   })();

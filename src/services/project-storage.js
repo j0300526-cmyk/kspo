@@ -16,17 +16,17 @@ export function createProjectStorage({
     try {
       if (indexed()) {
         await write(KEY, value);
-        onStatus('기기에 저장됨');
+        onStatus('기기에 저장했어요');
         return;
       }
       local?.setItem(KEY, JSON.stringify(value));
-      onStatus('브라우저에 저장됨');
+      onStatus('이 브라우저에 저장했어요');
     } catch {
       try {
         local?.setItem(KEY, JSON.stringify(value));
-        onStatus('브라우저에 저장됨');
+        onStatus('이 브라우저에 저장했어요');
       } catch {
-        onStatus('자동 저장 불가 · 파일로 저장하세요');
+        onStatus('자동 저장을 확인해 주세요. 프로젝트를 JSON 파일로 저장할 수 있어요.');
       }
     }
   }
@@ -56,14 +56,15 @@ export function createProjectStorage({
           return parseProject(candidate);
         } catch {}
       }
-      if (candidates.length) onStatus('이전 저장 파일을 읽지 못했습니다.');
+      if (candidates.length)
+        onStatus('이전 배치를 읽지 못했어요. 저장한 JSON 파일을 불러와 주세요.');
       return null;
     },
     schedule(value) {
       pending = { ...structuredClone(value), savedAt: Date.now() };
       latest = pending;
       clearTimeout(timer);
-      onStatus('저장 대기');
+      onStatus('변경 내용을 저장하고 있어요');
       timer = setTimeout(flush, 350);
     },
     flush,

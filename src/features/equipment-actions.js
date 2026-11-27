@@ -2,7 +2,7 @@ import { $, ico, modal, toast } from '../ui/primitives.js';
 import { equipmentTypes } from '../ui/equipment.js';
 export function bindEquipmentActions({ project, edit, store }) {
   $('#add-equipment').onclick = () => {
-    if (project().equipment.length >= 30) return toast('장비는 최대 30개입니다.');
+    if (project().equipment.length >= 30) return toast('장비는 30개까지 추가할 수 있어요.');
     modal(
       '장비 추가',
       `<div class="add-options">${Object.entries(equipmentTypes)

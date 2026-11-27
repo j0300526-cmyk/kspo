@@ -138,7 +138,7 @@ export function seatMapSVG({
     ${equipment.map((e) => `<g transform="translate(${e.x},${e.z}) rotate(${e.rotation})" data-map-equipment="${esc(e.id)}" style="cursor:pointer"><rect x="${-e.width / 2}" y="${-e.depth / 2}" width="${e.width}" height="${e.depth}" rx=".3" fill="${e.id === selectedId ? '#214d3a' : '#72947b'}" stroke="white" stroke-width=".3"/><text y="${e.depth / 2 + 2.3}" text-anchor="middle" fill="#526d58" font-size="1.5">${{ camera: 'CAM', speaker: 'SPK', console: 'FOH', screen: 'LED' }[e.type]}</text></g>`).join('')}
     <g fill="#6d836e" font-size="2.15" text-anchor="middle"><text x="${(Math.min(...xs) + Math.max(...xs)) / 2}" y="${z0 + 5}">무대 뒤편</text><text x="${(Math.min(...xs) + Math.max(...xs)) / 2}" y="${z0 + h - 4}">무대 맞은편</text><text x="${x0 + 8}" y="0" transform="rotate(-90 ${x0 + 8} 0)">평면도 왼쪽</text><text x="${x0 + w - 8}" y="0" transform="rotate(90 ${x0 + w - 8} 0)">평면도 오른쪽</text></g>
     ${selected ? `<circle cx="${selected.x}" cy="${selected.z}" r="1.15" fill="none" stroke="#214d3a" stroke-width=".4"/><circle cx="${selected.x}" cy="${selected.z}" r=".32" fill="#214d3a"/>` : ''}
-    ${points.length ? '' : `<text x="0" y="15" text-anchor="middle" font-size="3" fill="#6d836e">관찰점 데이터를 준비하고 있습니다</text>`}
+    ${points.length ? '' : `<text x="0" y="15" text-anchor="middle" font-size="3" fill="#6d836e">관찰점을 불러오고 있어요</text>`}
   </svg>`;
 }
 

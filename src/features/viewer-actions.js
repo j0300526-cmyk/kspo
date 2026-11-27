@@ -16,7 +16,7 @@ export function bindViewerActions({
         on3D();
         if (btn.dataset.view === 'eye' && !get().selectedPointId) {
           const p = get().analysis?.points.find((p) => p.ratio > 0) || get().analysis?.points[0];
-          if (!p) return toast('관찰점을 먼저 지정하세요.');
+          if (!p) return toast('지도에서 관찰점을 고르면 관객 시점을 볼 수 있어요.');
           selectPoint(p);
         }
         getScene()?.setView(btn.dataset.view);
@@ -41,7 +41,8 @@ export function bindViewerActions({
   $('#snapshot').onclick = () => {
     if (getDisplay() === 'map' && getMap())
       return download('garim-zero-map.svg', getMap(), 'image/svg+xml');
-    if (!getScene()) return toast('3D 화면을 사용할 수 없습니다.');
+    if (!getScene())
+      return toast('지도를 저장할 수 있어요. 3D는 새로고침한 뒤 다시 확인해 주세요.');
     const a = document.createElement('a');
     a.href = getScene().capture();
     a.download = 'garim-zero-view.png';
@@ -61,7 +62,7 @@ export function bindViewerActions({
     addPointMode = !addPointMode;
     getScene()?.setAddPoint(addPointMode);
     $('#add-point').classList.toggle('primary', addPointMode);
-    toast(addPointMode ? '모델 표면을 클릭해 관찰점을 추가하세요.' : '관찰점 지정 종료');
+    toast(addPointMode ? '모델 표면을 누르면 관찰점을 추가해요.' : '관찰점 추가를 마쳤어요');
   };
   $('#clear-points').onclick = () =>
     edit((p) => {
@@ -73,10 +74,10 @@ export function bindViewerActions({
       const file = e.target.files[0];
       if (!file) return;
       if (!getScene()) throw new Error('3D 화면을 먼저 준비해주세요.');
-      if (file.size > 150e6) throw new Error('모델은 150MB 이하여야 합니다.');
+      if (file.size > 150e6) throw new Error('150MB 이하의 모델 파일을 선택해 주세요.');
       await getScene().loadUserFile(file);
       $('#model-progress').classList.add('hidden');
-      $('#render-status').textContent = '3D 준비됨';
+      $('#render-status').textContent = '3D를 준비했어요';
       edit((p) => {
         p.customModel = file.name;
         p.observerMode = 'custom';
@@ -88,7 +89,7 @@ export function bindViewerActions({
       $('#model-mode option[value="official"]').textContent = '사용자 모델';
       $('#model-mode').value = 'official';
       $('#viewer-model-label').textContent = '사용자 모델';
-      toast('모델을 불러왔습니다. 관찰점을 직접 지정하세요.');
+      toast('모델을 불러왔어요. 표면을 눌러 관찰점을 추가해 주세요.');
     } catch (error) {
       toast(error.message);
     } finally {

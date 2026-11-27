@@ -20,7 +20,7 @@ export function bindStageActions({ project, edit, store, stageInputs, refreshSel
         value > Number(e.target.max)
       ) {
         e.target.value = project().stage[key];
-        return toast('입력 범위를 확인해주세요.');
+        return toast('표시된 범위 안의 숫자를 입력해 주세요.');
       }
       edit((p) => {
         p.stage[key] = value;

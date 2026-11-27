@@ -13,11 +13,11 @@ export function renderResults({
 }) {
   const shown = displayAnalysis || analysis;
   $('#analysis-status').textContent = error
-    ? '분석 오류'
+    ? '분석을 다시 확인해 주세요'
     : busy
-      ? '계산 중'
+      ? '시야를 계산하고 있어요'
       : analysis
-        ? '계산 완료'
+        ? '계산을 마쳤어요'
         : '대기';
   $('#analysis-status').dataset.busy = String(busy);
   $('#engine-mode').textContent =

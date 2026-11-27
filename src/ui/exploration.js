@@ -21,7 +21,7 @@ export function renderExploration(analysis, stage, regionId) {
   $('#region-visible-bar').style.width = `${visible}%`;
   $('#region-affected').textContent = summary.count
     ? `가림 발생 ${summary.affected.toLocaleString()}개 · 무대 위 9개 표본 기준`
-    : '이 영역에 분석할 관찰점이 없습니다.';
+    : '다른 영역을 고르면 관찰점을 확인할 수 있어요.';
   $('#region-enter').disabled = !summary.count;
 }
 
@@ -38,8 +38,8 @@ export function bindExploration({ onRegion, onEnter }) {
     $('#workspace-title').textContent = id === 'edit' ? '무대·장비 배치 편집' : '관람 위치별 시야';
     $('#workspace-description').textContent =
       id === 'edit'
-        ? '장비 위치를 조정하고, 관람 위치별 시야 변화를 확인하세요.'
-        : '공연장을 둘러보고, 장비 배치 전후의 시야를 비교하세요.';
+        ? '장비를 옮긴 뒤 시야가 어떻게 달라지는지 확인해요.'
+        : '지도에서 관람 위치를 고르고, 배치 전후의 시야를 비교해요.';
   }
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => showPanel(tab.dataset.panel), { signal: events.signal });

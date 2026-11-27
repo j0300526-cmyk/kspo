@@ -29,12 +29,12 @@ export function bindProjectActions({
       },
       { history: false },
     );
-    toast('기준안을 저장했습니다.');
+    toast('기준안을 저장했어요.');
   };
   $('#reset').onclick = () => {
     modal(
       '배치 초기화',
-      '<p>현재 배치를 기본값으로 바꿉니다. 변경 취소로 되돌릴 수 있습니다.</p><button class="btn primary" id="confirm-reset">초기화</button>',
+      '<p>기본 배치로 바꿔요. 이전 변경 취소로 지금 배치를 복원할 수 있어요.</p><button class="btn primary" id="confirm-reset">초기화</button>',
     );
     $('#confirm-reset').onclick = () => {
       edit((p) => {
@@ -56,16 +56,16 @@ export function bindProjectActions({
     try {
       const file = e.target.files[0];
       if (!file) return;
-      if (file.size > 2e6) throw new Error('프로젝트 파일은 2MB 이하여야 합니다.');
+      if (file.size > 2e6) throw new Error('2MB 이하의 프로젝트 JSON 파일을 선택해 주세요.');
       const next = parseProject(JSON.parse(await file.text()));
       store.replace(next);
       refreshStage();
       refreshInspector();
       if (next.customModel && getScene()?.meta?.name !== next.customModel) {
         getScene()?.setModelMode('schematic');
-        $('#venue-status').textContent = '사용자 모델을 다시 불러오세요: ' + next.customModel;
+        $('#venue-status').textContent = '이 모델 파일을 다시 선택해 주세요: ' + next.customModel;
       }
-      toast('프로젝트를 불러왔습니다.');
+      toast('프로젝트를 불러왔어요.');
     } catch (error) {
       toast(error.message);
     } finally {

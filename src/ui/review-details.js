@@ -39,10 +39,10 @@ export function createReviewDetails(selectPoint) {
       delta === null ? '—' : `${delta >= 0 ? '+' : ''}${delta.toFixed(2)}%p`;
     $('#impact-note').textContent = prior
       ? `50% 이상 가림 ${prior.severe.toLocaleString()} → ${analysis.severe.toLocaleString()}개`
-      : '기준안을 저장해 비교하세요';
+      : '현재 배치를 기준안으로 저장하면 비교할 수 있어요';
     $('#map-comparison-note').textContent = prior
       ? `가림 감소 ${counts.improved.toLocaleString()}개 · 가림 증가 ${counts.worse.toLocaleString()}개 · 같은 관찰점 기준`
-      : '기준안을 저장하면 배치 전후를 비교할 수 있습니다.';
+      : '기준안을 저장하면 배치 전후를 비교할 수 있어요.';
     const legend =
       plan === 'changes'
         ? [
@@ -60,7 +60,7 @@ export function createReviewDetails(selectPoint) {
       .join('');
     const current = analysis?.points.find((p) => p.id === selectedPointId),
       previous = prior?.points.find((p) => p.id === selectedPointId);
-    $('#point-title').textContent = current ? current.id : '위치를 선택하세요';
+    $('#point-title').textContent = current ? current.id : '지도에서 위치를 골라요';
     $('#point-before').textContent = previous
       ? `${previous.total - previous.blocked} / ${previous.total}`
       : '—';
@@ -75,7 +75,7 @@ export function createReviewDetails(selectPoint) {
           ? `현재안에서 보이는 표본 ${gain}개 증가`
           : gain < 0
             ? `현재안에서 보이는 표본 ${-gain}개 감소`
-            : '두 배치에서 보이는 표본 수가 같습니다.';
+            : '두 배치에서 보이는 표본 수가 같아요.';
       $('#point-change').classList.toggle('worse', gain < 0);
     }
     const signature = [shown, prior, regionId, selectedPointId, project.stage];
@@ -90,6 +90,6 @@ export function createReviewDetails(selectPoint) {
           (p) =>
             `<button class="point-row ${p.id === selectedPointId ? 'active' : ''}" data-pick-point="${esc(p.id)}"><span>${esc(p.id)} <small>관찰점</small></span><strong>${p.total - p.blocked} / ${p.total} 보임</strong></button>`,
         )
-        .join('') || '<p class="secondary-note">이 영역에 관찰점이 없습니다.</p>';
+        .join('') || '<p class="secondary-note">다른 영역에서 관찰점을 골라 주세요.</p>';
   };
 }
