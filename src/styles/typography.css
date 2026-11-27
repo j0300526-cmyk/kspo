@@ -1,0 +1,49 @@
+/* TDS Typography reference, expressed in rem to respect browser text settings.
+   Each size is paired with its reference line height. No native font-scale
+   bridge is assumed by this standalone web app. */
+:root {
+  --type-1-size: 1.875rem;
+  --type-1-line: 2.5rem;
+  --type-2-size: 1.625rem;
+  --type-2-line: 2.1875rem;
+  --type-3-size: 1.375rem;
+  --type-3-line: 1.9375rem;
+  --type-4-size: 1.25rem;
+  --type-4-line: 1.8125rem;
+  --type-5-size: 1.0625rem;
+  --type-5-line: 1.59375rem;
+  --type-6-size: 0.9375rem;
+  --type-6-line: 1.40625rem;
+  --type-7-size: 0.8125rem;
+  --type-7-line: 1.21875rem;
+  --type-sub-1-size: 1.8125rem;
+  --type-sub-1-line: 2.375rem;
+  --type-sub-2-size: 1.75rem;
+  --type-sub-2-line: 2.3125rem;
+  --type-sub-3-size: 1.6875rem;
+  --type-sub-3-line: 2.25rem;
+  --type-sub-4-size: 1.5625rem;
+  --type-sub-4-line: 2.125rem;
+  --type-sub-5-size: 1.5rem;
+  --type-sub-5-line: 2.0625rem;
+  --type-sub-6-size: 1.4375rem;
+  --type-sub-6-line: 2rem;
+  --type-sub-7-size: 1.3125rem;
+  --type-sub-7-line: 1.875rem;
+  --type-sub-8-size: 1.1875rem;
+  --type-sub-8-line: 1.75rem;
+  --type-sub-9-size: 1.125rem;
+  --type-sub-9-line: 1.6875rem;
+  --type-sub-10-size: 1rem;
+  --type-sub-10-line: 1.5rem;
+  --type-sub-11-size: 0.875rem;
+  --type-sub-11-line: 1.3125rem;
+  --type-sub-12-size: 0.75rem;
+  --type-sub-12-line: 1.125rem;
+  --type-sub-13-size: 0.6875rem;
+  --type-sub-13-line: 1.03125rem;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+}

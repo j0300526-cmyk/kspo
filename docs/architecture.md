@@ -21,6 +21,7 @@ UI는 Tabler Core의 컴포넌트 CSS와 프로젝트 테마를 결합합니다.
 | `src/rendering/` | SVG 관찰점 지도와 Three.js 장비·무대·관찰점 레이어, 자원 관리 |
 | `src/workers/` | 브라우저 계산 워커 진입점 |
 | `src/styles/workbench.css` | 작업용 편집기 레이아웃 |
+| `src/styles/typography.css` | TDS 기반 글자 크기·줄높이·굵기 토큰, rem 단위 확대 |
 
 `src/analysis.js`, `src/scene.js`는 기존 import를 위한 얇은 공개 진입점입니다. v1 프로젝트 JSON은 계속 읽을 수 있고 기준안은 선택 필드로 추가했습니다.
 
