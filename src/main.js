@@ -1,6 +1,8 @@
 import '@tabler/core/dist/css/tabler.min.css';
 import './styles/workbench.css';
+import { applyColorTokens } from './design/colors.js';
 import { createApplication } from './app/application.js';
+applyColorTokens();
 createApplication()
   .then((app) => {
     window.garimZeroApp = app;

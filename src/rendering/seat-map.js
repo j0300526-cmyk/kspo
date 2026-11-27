@@ -1,4 +1,5 @@
 import { polygonHull } from 'd3-polygon';
+import { colors } from '../design/colors.js';
 import { observationRegion } from '../domain/observation-regions.js';
 import { esc } from '../ui/primitives.js';
 import { MAP_COLORS } from './palette.js';
@@ -121,24 +122,24 @@ export function seatMapSVG({
     ],
   };
   const selected = points.find((p) => p.id === selectedPointId);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x0} ${z0} ${w} ${h}" data-base-viewbox="${x0} ${z0} ${w} ${h}" role="group" aria-label="공개 관찰점 위치 기반 공연장 지도. 공식 좌석번호가 아닙니다." style="width:100%;height:100%;display:block;background:#fff;font-family:Arial,'Malgun Gothic',sans-serif">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x0} ${z0} ${w} ${h}" data-base-viewbox="${x0} ${z0} ${w} ${h}" role="group" aria-label="공개 관찰점 위치 기반 공연장 지도. 공식 좌석번호가 아닙니다." style="width:100%;height:100%;display:block;background:${colors.background};font-family:Arial,'Malgun Gothic',sans-serif">
     <rect x="${x0}" y="${z0}" width="${w}" height="${h}" fill="white"/>
     <defs><clipPath id="bowl-clip"><path d="${boundary}" clip-rule="evenodd"/></clipPath></defs>
-    <path d="${boundary}" fill="#f2f6ef" fill-rule="evenodd" stroke="#dce5d9" stroke-width=".25"/>
+    <path d="${boundary}" fill="${colors.grey50}" fill-rule="evenodd" stroke="${colors.grey200}" stroke-width=".25"/>
     <g clip-path="url(#bowl-clip)">${Object.entries(sectors)
       .map(
         ([id, p]) =>
-          `<path d="${polygon(p)}" fill="${regionId === id ? '#e5efdc' : 'transparent'}" data-map-region="${id}" style="cursor:pointer"/>`,
+          `<path d="${polygon(p)}" fill="${regionId === id ? colors.blue50 : 'transparent'}" data-map-region="${id}" style="cursor:pointer"/>`,
       )
       .join('')}</g>
     ${Object.entries(groups)
       .map(([fill, d]) => `<path d="${d}" fill="${fill}"/>`)
       .join('')}
-    <g transform="translate(${stage.x},${stage.z})"><rect x="${-stage.width / 2}" y="${-stage.depth / 2}" width="${stage.width}" height="${stage.depth}" rx=".8" fill="#214d3a"/><text x="0" y=".8" text-anchor="middle" fill="white" font-size="${Math.min(2.5, stage.width / 7)}" font-weight="700" letter-spacing=".35">STAGE</text><path d="M${-stage.width / 2 + 0.8},${stage.depth / 2 - 0.4}h${stage.width - 1.6}" stroke="#9bc27e" stroke-width=".35"/></g>
-    ${equipment.map((e) => `<g transform="translate(${e.x},${e.z}) rotate(${e.rotation})" data-map-equipment="${esc(e.id)}" style="cursor:pointer"><rect x="${-e.width / 2}" y="${-e.depth / 2}" width="${e.width}" height="${e.depth}" rx=".3" fill="${e.id === selectedId ? '#214d3a' : '#72947b'}" stroke="white" stroke-width=".3"/><text y="${e.depth / 2 + 2.3}" text-anchor="middle" fill="#526d58" font-size="1.5">${{ camera: 'CAM', speaker: 'SPK', console: 'FOH', screen: 'LED' }[e.type]}</text></g>`).join('')}
-    <g fill="#6d836e" font-size="2.15" text-anchor="middle"><text x="${(Math.min(...xs) + Math.max(...xs)) / 2}" y="${z0 + 5}">무대 뒤편</text><text x="${(Math.min(...xs) + Math.max(...xs)) / 2}" y="${z0 + h - 4}">무대 맞은편</text><text x="${x0 + 8}" y="0" transform="rotate(-90 ${x0 + 8} 0)">평면도 왼쪽</text><text x="${x0 + w - 8}" y="0" transform="rotate(90 ${x0 + w - 8} 0)">평면도 오른쪽</text></g>
-    ${selected ? `<circle cx="${selected.x}" cy="${selected.z}" r="1.15" fill="none" stroke="#214d3a" stroke-width=".4"/><circle cx="${selected.x}" cy="${selected.z}" r=".32" fill="#214d3a"/>` : ''}
-    ${points.length ? '' : `<text x="0" y="15" text-anchor="middle" font-size="3" fill="#6d836e">관찰점을 불러오고 있어요</text>`}
+    <g transform="translate(${stage.x},${stage.z})"><rect x="${-stage.width / 2}" y="${-stage.depth / 2}" width="${stage.width}" height="${stage.depth}" rx=".8" fill="${colors.grey800}"/><text x="0" y=".8" text-anchor="middle" fill="white" font-size="${Math.min(2.5, stage.width / 7)}" font-weight="700" letter-spacing=".35">STAGE</text><path d="M${-stage.width / 2 + 0.8},${stage.depth / 2 - 0.4}h${stage.width - 1.6}" stroke="${colors.blue400}" stroke-width=".35"/></g>
+    ${equipment.map((e) => `<g transform="translate(${e.x},${e.z}) rotate(${e.rotation})" data-map-equipment="${esc(e.id)}" style="cursor:pointer"><rect x="${-e.width / 2}" y="${-e.depth / 2}" width="${e.width}" height="${e.depth}" rx=".3" fill="${e.id === selectedId ? colors.blue500 : colors.grey500}" stroke="white" stroke-width=".3"/><text y="${e.depth / 2 + 2.3}" text-anchor="middle" fill="${colors.grey700}" font-size="1.5">${{ camera: 'CAM', speaker: 'SPK', console: 'FOH', screen: 'LED' }[e.type]}</text></g>`).join('')}
+    <g fill="${colors.grey600}" font-size="2.15" text-anchor="middle"><text x="${(Math.min(...xs) + Math.max(...xs)) / 2}" y="${z0 + 5}">무대 뒤편</text><text x="${(Math.min(...xs) + Math.max(...xs)) / 2}" y="${z0 + h - 4}">무대 맞은편</text><text x="${x0 + 8}" y="0" transform="rotate(-90 ${x0 + 8} 0)">평면도 왼쪽</text><text x="${x0 + w - 8}" y="0" transform="rotate(90 ${x0 + w - 8} 0)">평면도 오른쪽</text></g>
+    ${selected ? `<circle cx="${selected.x}" cy="${selected.z}" r="1.35" fill="${colors.background}" stroke="${colors.blue500}" stroke-width=".5"/><circle cx="${selected.x}" cy="${selected.z}" r=".42" fill="${colors.blue500}"/>` : ''}
+    ${points.length ? '' : `<text x="0" y="15" text-anchor="middle" font-size="3" fill="${colors.grey600}">관찰점을 불러오고 있어요</text>`}
   </svg>`;
 }
 

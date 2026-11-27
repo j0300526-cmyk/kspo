@@ -1,26 +1,27 @@
 import * as THREE from 'three';
+import { colors } from '../design/colors.js';
 import { disposeObject } from './resources.js';
 export class StageLayer {
   constructor() {
     this.group = new THREE.Group();
     this.deck = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshStandardMaterial({ color: 0x242625, roughness: 0.9 }),
+      new THREE.MeshStandardMaterial({ color: colors.grey800, roughness: 0.9 }),
     );
     this.group.add(this.deck);
     this.edge = new THREE.LineSegments(
       new THREE.EdgesGeometry(this.deck.geometry),
-      new THREE.LineBasicMaterial({ color: 0x6a7269 }),
+      new THREE.LineBasicMaterial({ color: colors.grey600 }),
     );
     this.group.add(this.edge);
     this.marker = new THREE.Mesh(
       new THREE.CylinderGeometry(0.28, 0.28, 1.35, 12),
-      new THREE.MeshStandardMaterial({ color: 0x9a4a37 }),
+      new THREE.MeshStandardMaterial({ color: colors.blue500 }),
     );
     this.group.add(this.marker);
     this.front = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: 0x9a4a37 }),
+      new THREE.MeshBasicMaterial({ color: colors.blue500 }),
     );
     this.group.add(this.front);
     if (typeof document !== 'undefined') {
@@ -29,7 +30,7 @@ export class StageLayer {
       canvas.height = 128;
       const context = canvas.getContext('2d');
       if (context) {
-        context.fillStyle = '#ffffff';
+        context.fillStyle = colors.background;
         context.font = '600 65px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';

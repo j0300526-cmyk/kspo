@@ -7,6 +7,7 @@ UI는 Tabler Core의 컴포넌트 CSS와 프로젝트 테마를 결합합니다.
 | 경로 | 책임 |
 |---|---|
 | `src/main.js` | 스타일과 앱 시작점 |
+| `src/design/colors.js` | 사용자 제공 TDS 색상표, 웹 CSS 변수, 지도·3D 공통 색상 |
 | `src/app/application.js` | 서비스·상태·뷰 연결과 수명주기 |
 | `src/app/store.js` | Zustand 상태, 변경 이력, 검증된 프로젝트 교체 |
 | `src/domain/` | 기본 설정, 순수 교차 계산, Zod 스키마 |

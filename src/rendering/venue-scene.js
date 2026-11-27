@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { colors } from '../design/colors.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EquipmentLayer } from './equipment-layer.js';
 import { StageLayer } from './stage-layer.js';
@@ -22,8 +23,8 @@ export class VenueScene {
     this.showRoof = false;
     this.regionId = 'all';
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#f7f7f6');
-    this.scene.fog = new THREE.Fog('#f7f7f6', 170, 400);
+    this.scene.background = new THREE.Color(colors.grey50);
+    this.scene.fog = new THREE.Fog(colors.grey50, 170, 400);
     this.camera = new THREE.PerspectiveCamera(43, 1, 0.05, 900);
     this.camera.position.set(70, 65, 82);
     this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -38,21 +39,21 @@ export class VenueScene {
     this.controls.maxPolarAngle = Math.PI * 0.49;
     this.controls.minDistance = 3;
     this.controls.maxDistance = 230;
-    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x8d948a, 1.8));
-    const light = new THREE.DirectionalLight(0xffffff, 2);
+    this.scene.add(new THREE.HemisphereLight(colors.background, colors.grey500, 1.8));
+    const light = new THREE.DirectionalLight(colors.background, 2);
     light.position.set(40, 80, 30);
     this.scene.add(light);
-    const fill = new THREE.DirectionalLight(0xe5e8e1, 0.6);
+    const fill = new THREE.DirectionalLight(colors.grey200, 0.6);
     fill.position.set(-40, 20, -20);
     this.scene.add(fill);
     this.floor = new THREE.Mesh(
       new THREE.PlaneGeometry(350, 350),
-      new THREE.MeshBasicMaterial({ color: 0xf7f7f6 }),
+      new THREE.MeshBasicMaterial({ color: colors.grey50 }),
     );
     this.floor.rotation.x = -Math.PI / 2;
     this.floor.position.y = -0.3;
     this.scene.add(this.floor);
-    const grid = (this.grid = new THREE.GridHelper(240, 80, 0xdce2e6, 0xe8ecef));
+    const grid = (this.grid = new THREE.GridHelper(240, 80, colors.grey300, colors.grey200));
     grid.position.y = -0.25;
     grid.visible = false;
     this.scene.add(grid);
@@ -187,7 +188,7 @@ export class VenueScene {
     if (!point || !this.result) return;
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(0.42, 12, 8),
-      new THREE.MeshBasicMaterial({ color: 0x9a4a37 }),
+      new THREE.MeshBasicMaterial({ color: colors.blue500 }),
     );
     sphere.position.set(point.x, point.y, point.z);
     this.linesGroup.add(sphere);
@@ -366,7 +367,7 @@ export class VenueScene {
         const old = Array.isArray(o.material) ? o.material : [o.material];
         old.forEach((material) => material.dispose());
         o.material = new THREE.MeshStandardMaterial({
-          color: 0xbfc5bc,
+          color: colors.grey400,
           roughness: 0.9,
           side: THREE.DoubleSide,
           transparent: false,
