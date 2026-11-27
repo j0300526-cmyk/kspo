@@ -2,6 +2,7 @@ import { $, esc } from './primitives.js';
 import { comparisonCounts } from '../rendering/seat-map.js';
 import { MAP_COLORS } from '../rendering/palette.js';
 import { regionSummary } from '../domain/observation-regions.js';
+import { observationLabel } from './observation-label.js';
 
 export function createReviewDetails(selectPoint) {
   let listSignature,
@@ -60,7 +61,7 @@ export function createReviewDetails(selectPoint) {
       .join('');
     const current = analysis?.points.find((p) => p.id === selectedPointId),
       previous = prior?.points.find((p) => p.id === selectedPointId);
-    $('#point-title').textContent = current ? current.id : '지도에서 위치를 골라요';
+    $('#point-title').textContent = current ? observationLabel(current) : '지도에서 위치를 골라요';
     $('#point-before').textContent = previous
       ? `${previous.total - previous.blocked} / ${previous.total}`
       : '—';
@@ -88,7 +89,7 @@ export function createReviewDetails(selectPoint) {
       shownPoints
         .map(
           (p) =>
-            `<button class="point-row ${p.id === selectedPointId ? 'active' : ''}" data-pick-point="${esc(p.id)}"><span>${esc(p.id)} <small>관찰점</small></span><strong>${p.total - p.blocked} / ${p.total} 보임</strong></button>`,
+            `<button class="point-row ${p.id === selectedPointId ? 'active' : ''}" data-pick-point="${esc(p.id)}"><span>${esc(observationLabel(p))}</span><strong>${p.total - p.blocked} / ${p.total} 보임</strong></button>`,
         )
         .join('') || '<p class="secondary-note">다른 영역에서 관찰점을 골라 주세요.</p>';
   };

@@ -17,6 +17,7 @@ import { showReport } from '../features/reports.js';
 import { renderExploration, bindExploration } from '../ui/exploration.js';
 import { SeatMap, seatMapSVG } from '../rendering/seat-map.js';
 import { createReviewDetails } from '../ui/review-details.js';
+import { observationLabel } from '../ui/observation-label.js';
 import demoProject from '../data/demo-project.json';
 import {
   observationRegion,
@@ -252,9 +253,9 @@ export async function createApplication({
       return;
     }
     $('#selected-badge').textContent =
-      `${point.id} · ${point.total - point.blocked}/${point.total} 지점 보임`;
+      `${observationLabel(point)} · ${point.total - point.blocked}/${point.total} 지점 보임`;
     $('#point-description').textContent =
-      `${point.id} · 눈높이 ${point.y.toFixed(2)}m · 가림 ${point.blocked}/${point.total}`;
+      `눈높이 ${point.y.toFixed(2)}m · 가림 ${point.blocked}/${point.total}`;
     if (scene?.mode === 'eye') scene.setView('eye');
   }
   function selectPoint(point) {

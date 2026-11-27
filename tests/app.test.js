@@ -99,9 +99,14 @@ test('application flow: official observations, equipment edits, undo, comparison
   assert.match($('#metric-affected').textContent, /2,120/);
   $('[data-plan="changes"]').click();
   assert.match($('#map-legend').textContent, /가림 감소/);
-  $('[data-pick-point]').click();
-  assert.ok(diagnostic().selectedPointId);
-  assert.match($('#point-current').textContent, /\/ 9/);
+  const examplePoint = $('[data-pick-point="G01315"]');
+  assert.match(examplePoint.textContent, /관찰점 1315/);
+  examplePoint.click();
+  assert.equal(diagnostic().selectedPointId, 'G01315');
+  assert.equal($('#point-title').textContent, '관찰점 1315');
+  assert.match($('#selected-badge').textContent, /관찰점 1315/);
+  assert.equal($('#point-before').textContent, '6 / 9');
+  assert.equal($('#point-current').textContent, '5 / 9');
   $('[data-plan="current"]').click();
   assert.equal($('#panel-explore').hidden, false);
   $('[data-region="left"]').click();
